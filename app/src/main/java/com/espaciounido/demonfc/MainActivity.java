@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
+        if(iNfcView != null)
+            iNfcView.setTitle(getString(R.string.text_wait_nfc_tag));
         setupForegroundDispatch(this, mNfcAdapter);
     }
 
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
 
+            iNfcView.setTitle("Por favor espere...");
             new NdefReaderTask().execute(intent);
 
         }
@@ -88,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private class NdefReaderTask extends AsyncTask<Intent, Void, String> {
+    private class NdefReaderTask extends AsyncTask<Intent, Void, String[]> {
         @Override
-        protected String doInBackground(Intent... params) {
+        protected String[] doInBackground(Intent... params) {
             Intent intent = params[0];
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
@@ -98,15 +101,23 @@ public class MainActivity extends AppCompatActivity {
             String tagToString = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG).toString();
             if (tag != null) {
                 byte[] tagId = tag.getId();
-                return "UID: " + Coverter.getHexString(tagId, tagId.length) +"" +
-                                ", tagToString: " + tagToString + ", action: " + action;
+
+                return new String[]{
+                        "UID: "+Coverter.getHexString(tagId, tagId.length),
+                        "TagToString: "+tagToString,
+                        "Action: "+action,
+                };
             }
-            return "UID: " + Coverter.getUid(intent);
+            return new String[]{
+                    "UID: "+Coverter.getUid(intent)
+            };
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            iNfcView.setText(s);
+        protected void onPostExecute(String[] s) {
+            iNfcView.setDataset(s);
+            iNfcView.setTitle("¡Tag detectado!");
+
         }
     }
 

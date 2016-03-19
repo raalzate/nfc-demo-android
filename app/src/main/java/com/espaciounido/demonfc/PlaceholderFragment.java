@@ -9,26 +9,30 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public  class PlaceholderFragment extends Fragment implements INfcView {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
+
     private static final String ARG_SECTION_NUMBER = "section_number";
     private TextView textView;
+    private ListView listView;
+    private List<HashMap<String, String>> data;
+    private SimpleAdapter adapter;
 
     public PlaceholderFragment() {
     }
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
+
     public static PlaceholderFragment newInstance(int sectionNumber) {
         PlaceholderFragment fragment = new PlaceholderFragment();
         Bundle args = new Bundle();
@@ -42,12 +46,35 @@ public  class PlaceholderFragment extends Fragment implements INfcView {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         textView = (TextView) rootView.findViewById(R.id.section_label);
+        listView = (ListView) rootView.findViewById(R.id.list_view);
+
+        initVars();
         return rootView;
     }
 
+    private void initVars() {
+        data = new ArrayList<>();
+        adapter = new SimpleAdapter(getActivity(),data,android.R.layout.simple_list_item_1,
+                new String[] { "text1" },
+                new int[] { android.R.id.text1 });
+        listView.setAdapter(adapter);
+    }
+
     @Override
-    public void setText(String text){
+    public void setTitle(String text){
         textView.setText(text);
+    }
+
+    @Override
+    public void setDataset(String[] dataset) {
+        data.clear();
+        for(int i = 0; i < dataset.length; i++ ) {
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("text1", dataset[i]);
+            data.add(hashMap);
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     @Override
