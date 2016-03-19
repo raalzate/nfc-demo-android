@@ -54,9 +54,9 @@ public  class PlaceholderFragment extends Fragment implements INfcView {
 
     private void initVars() {
         data = new ArrayList<>();
-        adapter = new SimpleAdapter(getActivity(),data,android.R.layout.simple_list_item_1,
+        adapter = new SimpleAdapter(getActivity(),data,R.layout.item,
                 new String[] { "text1" },
-                new int[] { android.R.id.text1 });
+                new int[] { R.id.text1 });
         listView.setAdapter(adapter);
     }
 
@@ -68,13 +68,14 @@ public  class PlaceholderFragment extends Fragment implements INfcView {
     @Override
     public void setDataset(String[] dataset) {
         data.clear();
+        HashMap<String, String> hashMap;
         for(int i = 0; i < dataset.length; i++ ) {
-            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap = new HashMap<>();
             hashMap.put("text1", dataset[i]);
             data.add(hashMap);
         }
-
         adapter.notifyDataSetChanged();
+
     }
 
     @Override
